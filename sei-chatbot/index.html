@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistente Virtual — Portal SEI Alagoas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main id="chat-container" aria-label="Assistente virtual do Portal SEI Alagoas">
+
+    <!-- Cabeçalho -->
+    <header id="chat-header">
+      <div class="logo-circle">SEI</div>
+      <div class="header-text">
+        <h1>Assistente SEI Alagoas</h1>
+        <p>Portal de atendimento — portal.sei.al.gov.br</p>
+      </div>
+      <span class="status-dot" title="Online"></span>
+
+      <!-- Menu de opções: reiniciar / encerrar -->
+      <div id="header-actions">
+        <button id="restart-btn" class="header-btn" title="Reiniciar conversa" aria-label="Reiniciar conversa">
+          ⟲
+        </button>
+        <button id="end-btn" class="header-btn" title="Encerrar conversa" aria-label="Encerrar conversa">
+          ✕
+        </button>
+      </div>
+    </header>
+
+    <!-- Área de mensagens -->
+    <section id="messages" aria-live="polite" aria-label="Histórico da conversa"></section>
+
+    <!-- Estado de conversa encerrada (some por padrão) -->
+    <div id="ended-state" class="hidden">
+      <p>A conversa foi encerrada.</p>
+      <button id="new-conversation-btn" class="primary-btn">Iniciar nova conversa</button>
+    </div>
+
+    <!-- Área de entrada de texto -->
+    <footer id="input-area">
+      <textarea
+        id="user-input"
+        placeholder="Digite sua dúvida sobre o SEI..."
+        rows="1"
+        aria-label="Digite sua mensagem"
+      ></textarea>
+      <button id="send-btn" aria-label="Enviar mensagem">➤</button>
+    </footer>
+
+    <p id="disclaimer">
+      As respostas são baseadas nos manuais oficiais do SEI. Para suporte técnico, acesse
+      <a href="https://portal.sei.al.gov.br/" target="_blank" rel="noopener">portal.sei.al.gov.br</a>
+    </p>
+  </main>
+
+  <!-- Modal de confirmação para encerrar conversa -->
+  <div id="confirm-modal" class="modal-overlay hidden">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <h2 id="confirm-title">Encerrar conversa?</h2>
+      <p>Isso vai limpar todo o histórico da conversa atual. Essa ação não pode ser desfeita.</p>
+      <div class="modal-actions">
+        <button id="confirm-cancel-btn" class="secondary-btn">Cancelar</button>
+        <button id="confirm-end-btn" class="danger-btn">Encerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
