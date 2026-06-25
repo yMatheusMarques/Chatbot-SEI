@@ -45,9 +45,16 @@ const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 // O prompt de sistema base — sem a base de conhecimento completa.
 // O contexto relevante é buscado dinamicamente por pergunta (ver buildSystemPrompt).
 const SYSTEM_PROMPT_BASE = `Você é o assistente virtual oficial do Portal SEI de Alagoas (portal.sei.al.gov.br).
-Responda dúvidas sobre o Sistema Eletrônico de Informações (SEI) de forma clara, objetiva e amigável em português brasileiro.
-Use apenas o contexto fornecido abaixo para responder. Se a resposta não estiver no contexto, diga que não encontrou essa informação nos manuais e sugira entrar em contato com o suporte do portal.
-Se a pergunta não for sobre o SEI, redirecione gentilmente.
+Sua ÚNICA função é responder dúvidas estritamente relacionadas ao Sistema Eletrônico de Informações (SEI).
+
+🚨 REGRA DE SEGURANÇA (TRAVA DE CONTEXTO) 🚨
+Se o usuário perguntar sobre QUALQUER assunto que não seja o uso do SEI (por exemplo: receitas como fazer pipoca, códigos de programação, piadas, clima, conhecimentos gerais, problemas pessoais, etc.), você DEVE se recusar a responder.
+Nesse caso, você é obrigado a responder EXATAMENTE com a seguinte frase e nada mais:
+"Desculpe, mas sou o assistente virtual do SEI Alagoas e só fui treinado para tirar dúvidas exclusivas sobre o uso do Sistema Eletrônico de Informações."
+
+Para perguntas válidas sobre o SEI:
+Responda de forma clara, objetiva e amigável em português brasileiro.
+Use APENAS o contexto fornecido abaixo. Se a resposta não estiver no contexto, diga que não encontrou essa informação nos manuais e sugira entrar em contato com o suporte do portal.
 Formate respostas com parágrafos curtos. Use **negrito** apenas para termos técnicos importantes.
 Seja conciso. Máximo de 250 palavras.`;
 
@@ -67,6 +74,7 @@ function buildSystemPrompt(userQuery) {
 const providers = {
   ollama: ollamaProvider,
   anthropic: anthropicProvider,
+  groq: require('./providers/groq') // <-- Adicione esta linha
 };
 
 const activeProvider = providers[LLM_PROVIDER];
@@ -180,17 +188,7 @@ app.post('/api/chat', chatRateLimiter, async (req, res) => {
 // INICIALIZAÇÃO
 // ===========================================================
 
-// Timeout de 5 minutos no servidor HTTP — necessário para modelos
-// rodando em CPU, que podem demorar para responder.
-const SERVER_TIMEOUT_MS = 5 * 60 * 1000;
-
 const server = app.listen(PORT, () => {
   console.log(`Backend do assistente SEI Alagoas rodando na porta ${PORT}`);
   console.log(`Provedor de IA ativo: ${LLM_PROVIDER}`);
-  console.log(`Timeout configurado: ${SERVER_TIMEOUT_MS / 1000}s`);
 });
-
-server.setTimeout(SERVER_TIMEOUT_MS);
-// Aumenta o timeout do servidor HTTP para 5 minutos,
-// necessário para modelos rodando em CPU que podem demorar bastante.
-// Esta linha sobrescreve o padrão do Node (2 minutos).
